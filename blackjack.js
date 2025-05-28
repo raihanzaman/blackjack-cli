@@ -47,7 +47,6 @@ function shuffleDeck() {
 }
 
 function dealCard() {
-  if (deck.length === 0) shuffleDeck();
   return deck.pop();
 }
 
@@ -55,17 +54,6 @@ function askQuestion(questionText) {
   return new Promise(resolve => {
     rl.question(questionText, answer => resolve(answer));
   });
-}
-
-async function getValidBet() {
-  while (true) {
-    const betInput = await askQuestion(`Enter your bet (Available: $${user.money}): `);
-    const bet = parseInt(betInput, 10);
-    if (!isNaN(bet) && bet > 0 && bet <= user.money) {
-      return bet;
-    }
-    console.log('Invalid bet. Try again.');
-  }
 }
 
 async function playRound() {
@@ -111,8 +99,18 @@ async function playRound() {
       console.log('PUSH!');
     }
   }
-  shuffleDeck();
   await writeFile(userPath, JSON.stringify(user, null, 2));
+}
+
+async function getValidBet() {
+  while (true) {
+    const betInput = await askQuestion(`Enter your bet (Available: $${user.money}): `);
+    const bet = parseInt(betInput, 10);
+    if (!isNaN(bet) && bet > 0 && bet <= user.money) {
+      return bet;
+    }
+    console.log('Invalid bet. Try again.');
+  }
 }
 
 async function main() {
